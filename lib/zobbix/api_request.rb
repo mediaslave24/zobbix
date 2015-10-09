@@ -23,6 +23,7 @@ class Zobbix
     def initialize(uri, method, params)
       @uri    = uri.sub(/\/$/, '')
       @method = method
+      @auth   = params.delete(:auth)
       @params = params
     end
 

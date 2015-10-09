@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost/zabbix/api_jsonrpc.php
+    body:
+      encoding: UTF-8
+      string: '{"jsonrpc":"2.0","method":"user.login","params":{"user":"Admin","password":"zabbix"},"auth":null,"id":8485}'
+    headers:
+      Content-Type:
+      - application/json-rpc
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 09 Oct 2015 13:09:05 GMT
+      Server:
+      - Apache/2.4.7 (Ubuntu)
+      X-Powered-By:
+      - PHP/5.5.9-1ubuntu4.12
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - POST
+      Access-Control-Max-Age:
+      - '1000'
+      Content-Length:
+      - '71'
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"jsonrpc":"2.0","result":"ef466e128438daf7fb3ab4602b37a58c","id":8485}'
+    http_version: 
+  recorded_at: Fri, 09 Oct 2015 13:09:05 GMT
+recorded_with: VCR 2.9.3
