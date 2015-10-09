@@ -6,7 +6,7 @@ require 'rubygems/version'
 require 'rubygems/requirement'
 
 class Zobbix
-  ZABBIX_VERSION_REQUIREMENT = Gem::Requirement.new('>= 2.4.0', '< 2.5')
+  ZABBIX_VERSION_REQUIREMENT = Gem::Requirement.new('>= 2.2.0', '< 2.5')
 
   class Error < StandardError; end
 

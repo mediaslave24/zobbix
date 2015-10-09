@@ -34,7 +34,7 @@ http_interactions:
       - application/json
     body:
       encoding: UTF-8
-      string: '{"jsonrpc":"2.0","result":"2.3.6","id":5157}'
+      string: '{"jsonrpc":"2.0","result":"2.1.6","id":5157}'
     http_version: 
   recorded_at: Fri, 09 Oct 2015 11:05:53 GMT
 recorded_with: VCR 2.9.3
