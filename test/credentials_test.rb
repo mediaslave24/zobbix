@@ -15,8 +15,7 @@ class Zobbix
     end
 
     def test_it_recognizes_all_options
-      it_recognizes :host
-      it_recognizes :port
+      it_recognizes :uri
       it_recognizes :user
       it_recognizes :password
     end

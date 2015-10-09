@@ -6,12 +6,8 @@ class Zobbix
       @hash = hash.symbolize_keys
     end
 
-    def host
-      @hash.fetch(:host)
-    end
-
-    def port
-      @hash.fetch(:port)
+    def uri
+      @hash.fetch(:uri)
     end
 
     def user
@@ -20,6 +16,10 @@ class Zobbix
 
     def password
       @hash.fetch(:password)
+    end
+
+    def to_hash
+      @hash.dup
     end
   end
 end
