@@ -40,6 +40,8 @@ class Zobbix
     end
 
     def raise_exception
+      return if success?
+
       if @exception
         raise @exception
       else
