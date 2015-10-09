@@ -17,6 +17,10 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'minitest', '~> 5.8.1'
+  spec.add_development_dependency 'ffaker', '~> 2.1'
+  spec.add_development_dependency 'vcr', '~> 2.9.3'
+  spec.add_development_dependency 'pry', '~> 0.10.2'
 
   spec.add_runtime_dependency 'httparty', '~> 0.13.7'
+  spec.add_runtime_dependency 'powerpack', '~> 0.1.1'
 end
