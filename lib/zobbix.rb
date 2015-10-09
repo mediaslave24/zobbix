@@ -47,6 +47,7 @@ class Zobbix
   attr_reader :credentials, :auth
 
   def initialize(credentials)
+    @raise_exceptions = credentials.delete(:raise_exceptions) || false
     @credentials = Credentials.new(credentials)
     @auth        = nil
   end
@@ -77,21 +78,30 @@ class Zobbix
   end
 
   def request(method, *args)
-    namespace, mtd = method.split('.').map(&:capitalize)
+    request = resolve_class(method)
 
-    request = self.class.const_get(namespace).const_get("#{mtd}Request") rescue warn("#{$!.class}: #{$!.message}")
-    if request
-      if requires_auth?(method)
-        request.perform(credentials.uri, @auth, *args)
+    response =
+      if request
+        if requires_auth?(method)
+          request.perform(credentials.uri, @auth, *args)
+        else
+          request.perform(credentials.uri, *args)
+        end
       else
-        request.perform(credentials.uri, *args)
+        raw_request(method, args.first || {})
       end
-    else
-      raw_request(method, args.first || {})
-    end
+
+    response.raise_exception if @raise_exceptions && response.error?
+    response
   end
 
   private
+
+  def resolve_class(method)
+    namespace, mtd = method.split('.').map(&:capitalize)
+    self.class.const_get(namespace).const_get("#{mtd}Request")
+  rescue NameError
+  end
 
   def raw_request(method, params)
     ApiRequest.perform(credentials.uri, method, params.merge(auth: @auth))

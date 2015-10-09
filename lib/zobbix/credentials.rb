@@ -1,4 +1,4 @@
-require 'powerpack/hash/symbolize_keys'
+require 'zobbix/core_ext/hash'
 
 class Zobbix
   class Credentials

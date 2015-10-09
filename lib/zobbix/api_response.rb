@@ -38,5 +38,13 @@ class Zobbix
     def id
       @response['id']
     end
+
+    def raise_exception
+      if @exception
+        raise @exception
+      else
+        raise Error.new("API returned error. Code: #{error_code} Message: #{error_message} Data: #{error_data}")
+      end
+    end
   end
 end
