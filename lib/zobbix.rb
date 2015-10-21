@@ -46,12 +46,17 @@ class Zobbix
 
   attr_reader :credentials, :auth
 
+  #
+  # @param Zobbix::Credentials
   def initialize(credentials)
     @raise_exceptions = credentials.delete(:raise_exceptions) || false
     @credentials = Credentials.new(credentials)
     @auth        = nil
   end
 
+  # Checks API version
+  #
+  # @note This method should be called automatically
   def check_version!
     version = Apiinfo::VersionRequest.perform(credentials.uri).result
 
@@ -65,6 +70,11 @@ class Zobbix
     end
   end
 
+  # Performs authentication
+  #
+  # @return [String] Auth token
+  # @see https://www.zabbix.com/documentation/2.4/manual/api#authentication
+  # @note This method should be called automatically
   def authenticate!
     response = User::LoginRequest.perform(credentials.uri,
                                           credentials.user,
@@ -77,21 +87,29 @@ class Zobbix
     @auth = response.result
   end
 
-  def request(method, *args)
+  # Makes API request
+  #
+  # @param [String] request method
+  # @param [Hash] request params
+  # @return [Zobbix::ApiResponse] response object
+  #
+  # @see https://www.zabbix.com/documentation/2.4/manual/api/reference
+  def request(method, params = {})
     request = resolve_class(method)
 
     response =
       if request
         if requires_auth?(method)
-          request.perform(credentials.uri, @auth, *args)
+          request.perform(credentials.uri, @auth, params)
         else
-          request.perform(credentials.uri, *args)
+          request.perform(credentials.uri, params)
         end
       else
-        raw_request(method, args.first || {})
+        raw_request(method, params)
       end
 
     response.raise_exception if @raise_exceptions && response.error?
+
     response
   end
 
