@@ -20,6 +20,9 @@ class Zobbix
       new(*args).perform
     end
 
+    # @param [String] uri Zabbix Server uri
+    # @param [String] method API method
+    # @param [Hash] params API method params
     def initialize(uri, method, params)
       @uri    = uri.sub(/\/$/, '')
       @method = method
@@ -27,6 +30,9 @@ class Zobbix
       @params = params
     end
 
+    # Execute http request
+    #
+    # @return [Zobbix::ApiResponse]
     def perform
       ApiResponse.new { self.class.post("#{@uri}#{self.class.path}", body: payload) }
     end

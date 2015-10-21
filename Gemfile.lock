@@ -23,6 +23,7 @@ GEM
     rake (10.4.2)
     slop (3.6.0)
     vcr (2.9.3)
+    yard (0.8.7.6)
 
 PLATFORMS
   ruby
@@ -33,4 +34,8 @@ DEPENDENCIES
   pry (~> 0.10.2)
   rake (~> 10.0)
   vcr (~> 2.9.3)
+  yard
   zobbix!
+
+BUNDLED WITH
+   1.10.6

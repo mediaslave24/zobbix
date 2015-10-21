@@ -1,7 +1,5 @@
 require 'zobbix/credentials'
-require 'zobbix/apiinfo/version_request'
-require 'zobbix/user/login_request'
-
+require 'zobbix/api_request'
 require 'rubygems/version'
 require 'rubygems/requirement'
 
@@ -34,6 +32,11 @@ class Zobbix
     end
   end
 
+  #
+  # @param [Hash] credentials Connection credentials
+  # @option opts [String] :uri Zabbix Server URI
+  # @option opts [String] :user
+  # @option opts [String] :password
   def self.connect(credentials)
     new(credentials)
       .tap(&:check_version!)
@@ -45,9 +48,6 @@ class Zobbix
   end
 
   attr_reader :credentials, :auth
-
-  #
-  # @param Zobbix::Credentials
   def initialize(credentials)
     @raise_exceptions = credentials.delete(:raise_exceptions) || false
     @credentials = Credentials.new(credentials)
@@ -57,8 +57,10 @@ class Zobbix
   # Checks API version
   #
   # @note This method should be called automatically
+  # @raise Zobbix::ConnectionError Can't establish connection
+  # @raise Zobbix::UnsupportedVersionError Bad API version
   def check_version!
-    version = Apiinfo::VersionRequest.perform(credentials.uri).result
+    version = request('apiinfo.version').result
 
     if version.nil?
       raise ConnectionError.new(credentials)
@@ -75,10 +77,11 @@ class Zobbix
   # @return [String] Auth token
   # @see https://www.zabbix.com/documentation/2.4/manual/api#authentication
   # @note This method should be called automatically
+  #
+  # @raise Zobbix::AuthenticationError
   def authenticate!
-    response = User::LoginRequest.perform(credentials.uri,
-                                          credentials.user,
-                                          credentials.password)
+    response = request('user.login', user: credentials.user,
+                                     password: credentials.password)
 
     unless response.success?
       raise AuthenticationError.new(credentials)
@@ -89,41 +92,20 @@ class Zobbix
 
   # Makes API request
   #
-  # @param [String] request method
-  # @param [Hash] request params
-  # @return [Zobbix::ApiResponse] response object
+  # @param [String] method Request method
+  # @param [Hash] params Request params
+  # @return [Zobbix::ApiResponse] Response object
   #
   # @see https://www.zabbix.com/documentation/2.4/manual/api/reference
   def request(method, params = {})
-    request = resolve_class(method)
+    params = params.merge(auth: @auth) if requires_auth?(method)
 
-    response =
-      if request
-        if requires_auth?(method)
-          request.perform(credentials.uri, @auth, params)
-        else
-          request.perform(credentials.uri, params)
-        end
-      else
-        raw_request(method, params)
-      end
-
+    response = ApiRequest.perform(credentials.uri, method, params)
     response.raise_exception if @raise_exceptions && response.error?
-
     response
   end
 
   private
-
-  def resolve_class(method)
-    namespace, mtd = method.split('.').map(&:capitalize)
-    self.class.const_get(namespace).const_get("#{mtd}Request")
-  rescue NameError
-  end
-
-  def raw_request(method, params)
-    ApiRequest.perform(credentials.uri, method, params.merge(auth: @auth))
-  end
 
   def requires_auth?(method)
     method = method.to_s
