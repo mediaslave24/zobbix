@@ -43,8 +43,9 @@ class Zobbix
       .tap(&:authenticate!)
   end
 
-  def self.supported_version?(zabbix_version)
-    zabbix_version.to_s =~ /^2\.4\./
+  def self.supported_version?(version)
+    version = Gem::Version.new(version)
+    ZABBIX_VERSION_REQUIREMENT.satisfied_by?(version)
   end
 
   attr_reader :credentials, :auth
@@ -66,8 +67,7 @@ class Zobbix
       raise ConnectionError.new(credentials)
     end
 
-    version = Gem::Version.new(version)
-    unless ZABBIX_VERSION_REQUIREMENT.satisfied_by?(version)
+    unless self.class.supported_version?(version)
       raise UnsupportedVersionError.new(version)
     end
   end
