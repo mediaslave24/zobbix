@@ -98,9 +98,10 @@ class Zobbix
   #
   # @see https://www.zabbix.com/documentation/2.4/manual/api/reference
   def request(method, params = {})
-    params = params.merge(auth: @auth) if requires_auth?(method)
+    args = [credentials.uri, method, params]
+    args << @auth if requires_auth?(method)
 
-    response = ApiRequest.perform(credentials.uri, method, params)
+    response = ApiRequest.perform(*args)
     response.raise_exception if @raise_exceptions && response.error?
     response
   end

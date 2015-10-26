@@ -41,4 +41,14 @@ class ZobbixTest < Minitest::Test
       end
     end
   end
+
+  def test_params_as_array
+    VCR.use_cassette('array_params') do
+      z = zbx
+      z.authenticate!
+      response = z.request('host.delete', [10123])
+      assert_success(response)
+      pass
+    end
+  end
 end

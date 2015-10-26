@@ -23,10 +23,11 @@ class Zobbix
     # @param [String] uri Zabbix Server uri
     # @param [String] method API method
     # @param [Hash] params API method params
-    def initialize(uri, method, params)
+    # @param [String] auth Auth token
+    def initialize(uri, method, params, auth = nil)
       @uri    = uri.sub(/\/$/, '')
       @method = method
-      @auth   = params.delete(:auth)
+      @auth   = auth
       @params = params
     end
 
